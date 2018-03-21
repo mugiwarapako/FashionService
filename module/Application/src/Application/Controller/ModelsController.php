@@ -14,11 +14,11 @@ class ModelsController extends AbstractActionController
 
     private $modelsService;
 
-    public function getModel(){
+    function getModel(){
     	return $this->voluntCreadorService = new ModelsService();
     }
 
-    public function listAction(){
+    function listAction(){
         
         $models = $this->getModel()->getAll();
         $response = $this->getResponse()->setContent(\Zend\Json\Json::encode(array(
@@ -28,13 +28,12 @@ class ModelsController extends AbstractActionController
         return $response;
         //exit;
     }
-    public function addModelsAction(){
-        
+    function addModelsAction(){
     	$request = $this->getRequest();
     	if ($request->isPost()) {
     		$postData       = $this->getRequest()->getContent();
     		$decodePostData = json_decode($postData, true);
-          
+    		
     		$result = $this->getModel()->addModel($decodePostData);
 //     		print_r($result);
 //     		exit;
@@ -46,11 +45,9 @@ class ModelsController extends AbstractActionController
             return $response;
      
     	}
-
-    	exit;
     }
     
-    public function existModelAction(){
+    function existModelAction(){
         
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -66,8 +63,57 @@ class ModelsController extends AbstractActionController
             return $response;
             
         }
-        
-        exit;
+    }
+    
+    function changeStatusAction(){
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData       = $this->getRequest()->getContent();
+            $decodePostData = json_decode($postData, true);
+            
+            $result = $this->getModel()->changeStatus($decodePostData);
+            
+            $response = $this->getResponse()->setContent(\Zend\Json\Json::encode(array(
+                "response" => $result,
+            )));
+            
+            return $response;
+            
+        }
+    }
+    
+    function listModelByEventAction(){
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData       = $this->getRequest()->getContent();
+            $decodePostData = json_decode($postData, true);
+            
+            $result = $this->getModel()->getListByEvent($decodePostData);
+            
+            $response = $this->getResponse()->setContent(\Zend\Json\Json::encode(array(
+                "response" => $result,
+            )));
+            
+            return $response;
+            
+        }
+    }
+    
+    function nextAction(){
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData       = $this->getRequest()->getContent();
+            $decodePostData = json_decode($postData, true);
+            
+            $result = $this->getModel()->next($decodePostData);
+            
+            $response = $this->getResponse()->setContent(\Zend\Json\Json::encode(array(
+                "response" => $result,
+            )));
+            
+            return $response;
+            
+        }
     }
 
 }

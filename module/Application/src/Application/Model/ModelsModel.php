@@ -28,6 +28,9 @@ class ModelsModel extends TableGateway
                 'id',
                 'descripcion',
                 'imagen',
+                'qualifyMiddle',
+                'qualifyDown',
+                'qualifyTop',
                 'id_evento'
         ))->from(array(
             'v' => $this->table
@@ -69,7 +72,16 @@ class ModelsModel extends TableGateway
             $array = array(
                 'descripcion'=> $dataModelo['descripcion'],
                 'imagen'=> $dataModelo['imagen'],
-                'id_evento'=> $dataModelo['id_evento']
+//                 'qualifyTop'=> $dataModelo['qualifyTop'],
+//                 'qualifyMiddle'=> $dataModelo['qualifyMiddle'],
+//                 'qualifyDown'=> $dataModelo['qualifyDown'],
+                'qualifyTop'=> 1,
+                'qualifyMiddle'=> 1,
+                'qualifyDown'=> 1,
+                'id_evento'=> 11,
+                'latitud'=> $dataModelo['latitud'],
+                'status'=> $dataModelo['status'],
+                'longitud'=> $dataModelo['longitud']
             );
             
             $insertar->values($array);
@@ -78,10 +90,10 @@ class ModelsModel extends TableGateway
             $results = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
             $flag = true;
         } catch (\PDOException $e) {
-            // echo "First Message " . $e->getMessage() . "<br/>";
+             echo "First Message " . $e->getMessage() . "<br/>";
             $flag = false;
         } catch (\Exception $e) {
-            // echo "Second Message: " . $e->getMessage() . "<br/>";
+             echo "Second Message: " . $e->getMessage() . "<br/>";
         }
         $respuesta['status'] = $flag;
 
@@ -123,26 +135,51 @@ class ModelsModel extends TableGateway
     }
     
     
-//     public function maxFolio($folioNuevo)
-//     {
+    public function changeStatus($data)
+    {
+        $flag = false;
+        $respuesta = array();
         
-//         // $consulta=$this->dbAdapter->query("select id , folio FROM voluntarioCreador where nombre = '" . $dataUser['nombre']."' and correo = '".$dataUser['correo']. "'" ,Adapter::QUERY_MODE_EXECUTE);
-//         $consulta = $this->dbAdapter->query("select max(folio) as maxFolio FROM voluntarioCreador where folio like '" . $folioNuevo . "%'", Adapter::QUERY_MODE_EXECUTE);
-        
-//         $res = $consulta->toArray();
-//         return $res;
-//     }
+        try {
+            $sql = new Sql($this->dbAdapter);
+            $update = $sql->update();
+            $update->table($this->table);
+            
+            $array = array(
+                'status' => $data["status"]
+            );
+            
+            $update->set($array);
+            $update->where(array(
+                'id' => $data["id"]
+            ));
+            
+            $selectString = $sql->getSqlStringForSqlObject($update);
+            $results = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+            $flag = true;
+        } catch (\PDOException $e) {
+            // echo "First Message " . $e->getMessage() . "<br/>";
+            $flag = false;
+        } catch (\Exception $e) {
+            // echo "Second Message: " . $e->getMessage() . "<br/>";
+        }
+        $respuesta['status'] = $flag;
+        return $respuesta;
+    }
     
-//     public function existeCorreo($dataUser)
-//     {
-//         $consulta = $this->dbAdapter->query("select id , folio, correo FROM voluntarioCreador where correo = '" . $dataUser['correo'] . "'", Adapter::QUERY_MODE_EXECUTE);
+    function getListByEvent($data){
+                
+        $query ="select * FROM modelo where id_evento = '" . $data['id_evento']."' and status = '" . $data['status']."' order by id asc";
+                
+        $consulta = $this->dbAdapter->query($query, Adapter::QUERY_MODE_EXECUTE);
         
-//         $res = $consulta->toArray();
-//         // echo "existe correo";
-//         // print_r($res);
+        $res = $consulta->toArray();
         
-//         return $res;
-//     }
+        
+        return $res;
+    }
+    
+    
 
 }
 

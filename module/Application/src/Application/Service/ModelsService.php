@@ -54,5 +54,45 @@ class ModelsService
         $existeVolCreador = $this->getVolCreadorModel()->existe($decodePostData['folio']);
         return $existeVolCreador;
     }
+    
+    function changeStatus($data){
+        
+        return $this->getVolCreadorModel()->changeStatus($data);
+        
+    }
+    
+    function getListByEvent($data){
+        
+        return $this->getVolCreadorModel()->getListByEvent($data);
+        
+    }
+    
+    function next($data){
+        
+        $consulta = $this->getVolCreadorModel()->getListByEvent($data);
+        
+        $modelo = count($consulta);
+      
+        for ($i = 0; $i < $modelo; $i++){
+            if($consulta[$i]['id'] == $data['id']){
+                if(($i + 1) == count($consulta)){
+                    $respuesta['status'] = false;
+                    break;
+                }else{
+                    $respuesta['status'] = true;
+                    $respuesta['modelo'] = $consulta[$i + 1];
+                    break;
+                }
+            }else{
+                $respuesta['status'] = true;
+                $respuesta['modelo'] = $consulta[0];
+            }
+        }
+        
+        
+        
+        return $respuesta;
+    }
+    
 }
 ?>
